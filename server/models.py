@@ -20,8 +20,10 @@ class Hero(db.Model, SerializerMixin):
     name = db.Column(db.String)
     super_name = db.Column(db.String)
 
-    # add relationship
-    hero_powers = db.relationship("HeroPower", back_populates="hero")
+    # add relationship with cascade
+    hero_powers = db.relationship(
+        "HeroPower", back_populates="hero", cascade="all, delete-orphan"
+    )
     powers = association_proxy("hero_powers", "power")
 
     # add serialization rules
@@ -38,8 +40,10 @@ class Power(db.Model, SerializerMixin):
     name = db.Column(db.String)
     description = db.Column(db.String)
 
-    # add relationship
-    hero_powers = db.relationship("HeroPower", back_populates="power")
+    # add relationship with cascade
+    hero_powers = db.relationship(
+        "HeroPower", back_populates="power", cascade="all, delete-orphan"
+    )
     heroes = association_proxy("hero_powers", "hero")
 
     # add serialization rules
@@ -61,8 +65,8 @@ class HeroPower(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     strength = db.Column(db.String, nullable=False)
-    hero_id = db.Column(db.Integer, db.ForeignKey("heroes.id"))
-    power_id = db.Column(db.Integer, db.ForeignKey("powers.id"))
+    hero_id = db.Column(db.Integer, db.ForeignKey("heroes.id", ondelete="CASCADE"))
+    power_id = db.Column(db.Integer, db.ForeignKey("powers.id", ondelete="CASCADE"))
 
     # add relationships
     hero = db.relationship("Hero", back_populates="hero_powers")
